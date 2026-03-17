@@ -73,14 +73,24 @@ class _MainGameScreenState extends ConsumerState<MainGameScreen>
     );
 
     if (result.hasAnyGain && mounted) {
-      // Sync state back
+      // calculateOfflineGains() mutates player/plots in-memory but does NOT
+      // persist to Hive. We must save BEFORE calling refresh(), otherwise
+      // refresh() reloads stale Hive data and discards all mutations.
+      await SaveService.instance.savePlayer(player);
+      await SaveService.instance.savePlots(plots);
+
+      // Now reload providers from updated Hive data
       ref.read(playerProvider.notifier).refresh();
-      await ref.read(gardenProvider.notifier).applyOfflineHarvest(0); // already applied
+
+      // applyOfflineHarvest(0): tea leaves already credited by OfflineService.
+      // This call still persists plots state and triggers the garden UI rebuild.
+      await ref.read(gardenProvider.notifier).applyOfflineHarvest(0);
+
       await ref.read(processingProvider.notifier).applyOfflineCompleted(
         result.completedTasks,
       );
 
-      _showOfflineDialog(result);
+      if (mounted) _showOfflineDialog(result);
     }
   }
 
