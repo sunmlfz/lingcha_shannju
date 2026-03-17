@@ -1,0 +1,12 @@
+android {
+    namespace "com.lingcha.lingcha_shannju"
+    compileSdkVersion 34
+
+    defaultConfig {
+        applicationId "com.lingcha.lingcha_shannju"
+        minSdkVersion 21
+        targetSdkVersion 34
+        versionCode 1
+        versionName "0.1.0"
+    }
+}
