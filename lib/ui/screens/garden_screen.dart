@@ -171,10 +171,10 @@ class _GardenScreenState extends ConsumerState<GardenScreen> {
 
     await showDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('选择种植茶叶'),
-        content: StatefulBuilder(
-          builder: (ctx2, setS) => Column(
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx2, setS) => AlertDialog(
+          title: const Text('选择种植茶叶'),
+          content: Column(
             mainAxisSize: MainAxisSize.min,
             children: TeaVariety.values.map((variety) {
               return RadioListTile<TeaVariety>(
@@ -192,39 +192,39 @@ class _GardenScreenState extends ConsumerState<GardenScreen> {
               );
             }).toList(),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('取消'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.brown.shade600,
-              foregroundColor: Colors.white,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx2),
+              child: const Text('取消'),
             ),
-            onPressed: selected == null
-                ? null
-                : () async {
-                    Navigator.pop(ctx);
-                    final success = await ref
-                        .read(gardenProvider.notifier)
-                        .plantTea(plotIndex, selected!);
-                    if (success && context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            '种下了 ${selected!.displayName}，'
-                            '${_formatSeconds(selected!.growthSeconds)}后收获！',
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.brown.shade600,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: selected == null
+                  ? null
+                  : () async {
+                      Navigator.pop(ctx2);
+                      final success = await ref
+                          .read(gardenProvider.notifier)
+                          .plantTea(plotIndex, selected!);
+                      if (success && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              '种下了 ${selected!.displayName}，'
+                              '${_formatSeconds(selected!.growthSeconds)}后收获！',
+                            ),
+                            backgroundColor: Colors.green.shade700,
                           ),
-                          backgroundColor: Colors.green.shade700,
-                        ),
-                      );
-                    }
-                  },
-            child: const Text('种植'),
-          ),
-        ],
+                        );
+                      }
+                    },
+              child: const Text('种植'),
+            ),
+          ],
+        ),
       ),
     );
   }
